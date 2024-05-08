@@ -26,7 +26,23 @@ class SnakeGame:
         self.w = w
         self.h = h
         self.display = pygame.display.set_mode((self.w, self.h))
-        pygame.display.set_caption('SNAKE_GAME')
+        pygame.display.set_caption('SNAKE_GAME_23521682_23521316_23520610')
+        # initialise game settings
+        # direction
+        self.direction = Direction.RIGHT
+        # snake
+        self.head = Point(self.w / 2, self.h / 2)
+        self.snake = [
+            self.head,
+            Point(self.head.x - BLOCK_SIZE, self.head.y),
+            Point(self.head.x - 2 * BLOCK_SIZE, self.head.y)
+        ]
+        # food
+        self.food = None
+        # clock
+        self.clock = pygame.time.Clock()
+        # score
+        self.score=0;
 
 if __name__ == '__main__':
     game = SnakeGame()
