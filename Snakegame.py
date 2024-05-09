@@ -12,7 +12,7 @@ class Direction(Enum):
     DOWN = 4
 
 Point = namedtuple('Point', 'x, y')
-
+font = pygame.font.Font('Roboto-Medium.ttf', 25)
 BLOCK_SIZE = 20
 
 BLACK = (0, 0, 0)
@@ -43,12 +43,30 @@ class SnakeGame:
         self.clock = pygame.time.Clock()
         # score
         self.score=0;
+        self._place_food()
     def _place_food(self):
         x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         self.food = Point(x, y)
         if self.food in self.snake:
             self._place_food()
+    def _update_ui(self):
+        # fill window
+        self.display.fill(BLACK)
+        # draw snake
+        for pt in self.snake:
+            pygame.draw.rect(self.display, BLUE1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
+            pygame.draw.rect(self.display, BLUE2,
+                             pygame.Rect(pt.x + 0.2 * BLOCK_SIZE, pt.y + 0.2 * BLOCK_SIZE, 0.6 * BLOCK_SIZE,
+                                         0.6 * BLOCK_SIZE))
+        # draw food
+        pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        # update score
+        text = font.render('Score: ' + str(self.score), True, WHITE)
+        self.display.blit(text, [0.2 * BLOCK_SIZE, 0.2 * BLOCK_SIZE])
+        # update ui
+        pygame.display.flip()
+
 
 if __name__ == '__main__':
     game = SnakeGame()
@@ -57,4 +75,6 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+        game._update_ui() 
         pygame.display.update()
+        game.clock.tick(10)  
