@@ -20,6 +20,30 @@ WHITE = (255, 255, 255)
 BLUE1 = (0, 0, 255)
 BLUE2 = (0, 110, 255)
 RED = (200, 0, 0)
+class Menu:
+    def __init__(self, surface, options):
+        self.surface = surface
+        self.options = options
+        self.selected_option = 0
+
+    def draw(self):
+        height = len(self.options) * font.get_height()
+        y = (self.surface.get_height() - height) // 2
+        for i, option in enumerate(self.options):
+            text = font.render(option, True, WHITE)
+            rect = text.get_rect(center=(self.surface.get_width() // 2, y + i * font.get_height()))
+            if i == self.selected_option:
+                pygame.draw.rect(self.surface, BLUE1, rect)
+            self.surface.blit(text, rect)
+
+    def select_next_option(self):
+        self.selected_option = (self.selected_option + 1) % len(self.options)
+
+    def select_previous_option(self):
+        self.selected_option = (self.selected_option - 1) % len(self.options)
+
+    def get_selected_option(self):
+        return self.options[self.selected_option]
 
 class SnakeGame:
     def __init__(self, w=1000, h=800):
