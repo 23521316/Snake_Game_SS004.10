@@ -68,6 +68,18 @@ class SnakeGame:
         # score
         self.score=0;
         self._place_food()
+    def play_step(self):
+        self._handle_input()
+        if not self.game_started:
+            self.display.fill(BLACK)
+            self.menu.draw()
+        else:
+            self._move_snake()
+            self._check_collision()
+            self._update_ui()
+        pygame.display.flip()
+        self.clock.tick(self.frame_rate)  # Limit the frame rate here
+        
     def _place_food(self):
         x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
