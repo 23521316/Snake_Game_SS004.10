@@ -89,6 +89,20 @@ class SnakeGame:
         self.food = Point(x, y)
         if self.food in self.snake:
             self._place_food()
+    def _move_head(self, direction):
+        x = self.head.x
+        y = self.head.y
+
+        if direction == Direction.RIGHT:
+            x += BLOCK_SIZE
+        elif direction == Direction.LEFT:
+            x -= BLOCK_SIZE
+        elif direction == Direction.UP:
+            y -= BLOCK_SIZE
+        elif direction == Direction.DOWN:
+            y += BLOCK_SIZE
+
+        self.head = Point(x, y)        
     def _update_ui(self):
         # fill window
         self.display.fill(BLACK)
