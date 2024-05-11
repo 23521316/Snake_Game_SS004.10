@@ -78,7 +78,11 @@ class SnakeGame:
         # 6. Return game over and score
         game_over = False
         return game_over, self.score
-        
+    def _is_collision(self):
+        if self.head.x < 0 or self.w - BLOCK_SIZE < self.head.x or self.head.y < 0 or self.h - BLOCK_SIZE < self.head.y:
+            return True
+        if self.head in self.snake[1:]:
+            return True    
     def _place_food(self):
         x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
