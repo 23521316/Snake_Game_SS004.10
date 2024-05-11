@@ -129,11 +129,11 @@ class SnakeGame:
 
 if __name__ == '__main__':
     game = SnakeGame()
+
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-        game._update_ui() 
-        pygame.display.update()
-        game.clock.tick(10)  
+        game_over, score = game.play_step()
+        if game_over == True:
+            break
+
+    print('Final Score: ' + str(score))
+    pygame.quit()
