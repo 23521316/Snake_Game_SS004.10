@@ -46,7 +46,7 @@ class Menu:
         return self.options[self.selected_option]
 
 class SnakeGame:
-    def __init__(self, w=1000, h=800):
+    def __init__(self, w=1000, h=750):
         self.w = w
         self.h = h
         self.display = pygame.display.set_mode((self.w, self.h))
