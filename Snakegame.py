@@ -46,7 +46,7 @@ class Menu:
         return self.options[self.selected_option]
 
 class SnakeGame:
-    def __init__(self, w=1000, h=800):
+    def __init__(self, w=1000, h=750):
         self.w = w
         self.h = h
         self.display = pygame.display.set_mode((self.w, self.h))
@@ -102,13 +102,31 @@ class SnakeGame:
         # 6. Return game over and score
         game_over = False
         return game_over, self.score
-        
+    def _is_collision(self):
+        if self.head.x < 0 or self.w - BLOCK_SIZE < self.head.x or self.head.y < 0 or self.h - BLOCK_SIZE < self.head.y:
+            return True
+        if self.head in self.snake[1:]:
+            return True    
     def _place_food(self):
         x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         self.food = Point(x, y)
         if self.food in self.snake:
             self._place_food()
+    def _move_head(self, direction):
+        x = self.head.x
+        y = self.head.y
+
+        if direction == Direction.RIGHT:
+            x += BLOCK_SIZE
+        elif direction == Direction.LEFT:
+            x -= BLOCK_SIZE
+        elif direction == Direction.UP:
+            y -= BLOCK_SIZE
+        elif direction == Direction.DOWN:
+            y += BLOCK_SIZE
+
+        self.head = Point(x, y)        
     def _update_ui(self):
         # fill window
         self.display.fill(BLACK)
