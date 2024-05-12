@@ -145,6 +145,7 @@ class SnakeGame:
         self.snake.insert(0, self.head)
     def _check_collision(self):
         if self.head in self.snake[1:] or not (0 <= self.head.x < self.w) or not (0 <= self.head.y < self.h):
+            self._game_over()
             self.game_started = False
             return
         if self.head == self.food:
@@ -163,7 +164,14 @@ class SnakeGame:
         text = font.render('Score: ' + str(self.score), True, WHITE)
         self.display.blit(text, [10, 10])
         pygame.display.flip()
-
+    def _game_over(self):
+        self.display.fill(BLACK)
+        game_over_text = font.render('GAME OVER', True, WHITE)
+        score_text = font.render('Score: ' + str(self.score), True, WHITE)
+        self.display.blit(game_over_text, [self.w // 2 - game_over_text.get_width() // 2, self.h // 2 - game_over_text.get_height() // 2])
+        self.display.blit(score_text, [self.w // 2 - score_text.get_width() // 2, self.h // 2 + game_over_text.get_height() // 2])
+        pygame.display.flip()
+        pygame.time.wait(2000)
     def run(self):
         while True:
             self.play_step()
