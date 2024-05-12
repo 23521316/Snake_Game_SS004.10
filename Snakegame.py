@@ -46,7 +46,7 @@ class Menu:
         return self.options[self.selected_option]
 
 class SnakeGame:
-    def __init__(self, w=1000, h=750):
+    def __init__(self, w=1000, h=800):
         self.w = w
         self.h = h
         self.display = pygame.display.set_mode((self.w, self.h))
@@ -143,6 +143,9 @@ class SnakeGame:
         self.display.blit(text, [0.2 * BLOCK_SIZE, 0.2 * BLOCK_SIZE])
         # update ui
         pygame.display.flip()
+    def run(self):
+        while True:
+            self.play_step()
 
 
 if __name__ == '__main__':
