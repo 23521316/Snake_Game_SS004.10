@@ -12,7 +12,7 @@ class Direction(Enum):
     DOWN = 4
 
 Point = namedtuple('Point', 'x, y')
-
+font = pygame.font.Font('Roboto-Medium.ttf', 25)
 BLOCK_SIZE = 20
 
 BLACK = (0, 0, 0)
@@ -67,18 +67,117 @@ class SnakeGame:
         self.clock = pygame.time.Clock()
         # score
         self.score=0;
+        self._place_food()
+        self.menu = Menu(self.display, ["Easy", "Medium", "Hard"])
+        self.game_started = False
+        self.frame_rate = 10  # Default frame rate
+    def _handle_input(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if not self.game_started:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        difficulty = self.menu.get_selected_option()
+                        self.start_game(difficulty)
+                    elif event.key == pygame.K_UP:
+                        self.menu.select_previous_option()
+                    elif event.key == pygame.K_DOWN:
+                        self.menu.select_next_option()
+            else:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RIGHT and self.direction != Direction.LEFT:
+                        self.direction = Direction.RIGHT
+                    elif event.key == pygame.K_LEFT and self.direction != Direction.RIGHT:
+                        self.direction = Direction.LEFT
+                    elif event.key == pygame.K_UP and self.direction != Direction.DOWN:
+                        self.direction = Direction.UP
+                    elif event.key == pygame.K_DOWN and self.direction != Direction.UP:
+                        self.direction = Direction.DOWN
+    def start_game(self, difficulty):
+        # Initialize game settings based on difficulty
+        if difficulty == "Easy":
+            self.frame_rate = 5
+        elif difficulty == "Medium":
+            self.frame_rate = 10
+        elif difficulty == "Hard":
+            self.frame_rate = 15
+        # Reset game state
+        self.game_started = True
+        self.head = Point(self.w / 2, self.h / 2)
+        self.snake = [
+            self.head,
+            Point(self.head.x - BLOCK_SIZE, self.head.y),
+            Point(self.head.x - 2 * BLOCK_SIZE, self.head.y)
+        ]
+        self.direction = Direction.RIGHT
+        self.score = 0
+        self._place_food()
+    def play_step(self):
+        self._handle_input()
+        if not self.game_started:
+            self.display.fill(BLACK)
+            self.menu.draw()
+        else:
+            self._move_snake()
+            self._check_collision()
+            self._update_ui()
+        pygame.display.flip()
+        self.clock.tick(self.frame_rate)  # Limit the frame rate here
     def _place_food(self):
         x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         self.food = Point(x, y)
         if self.food in self.snake:
             self._place_food()
+    def _move_snake(self):
+        new_head = self.head
+        if self.direction == Direction.RIGHT:
+            new_head = Point(self.head.x + BLOCK_SIZE, self.head.y)
+        elif self.direction == Direction.LEFT:
+            new_head = Point(self.head.x - BLOCK_SIZE, self.head.y)
+        elif self.direction == Direction.UP:
+            new_head = Point(self.head.x, self.head.y - BLOCK_SIZE)
+        elif self.direction == Direction.DOWN:
+            new_head = Point(self.head.x, self.head.y + BLOCK_SIZE)
+        self.head = new_head
+        self.snake.insert(0, self.head)
+    def _check_collision(self):
+        if self.head in self.snake[1:] or not (0 <= self.head.x < self.w) or not (0 <= self.head.y < self.h):
+            self._game_over()
+            self.game_started = False
+            return
+        if self.head == self.food:
+            self.score += 1
+            self._place_food()
+        else:
+            self.snake.pop()
+    def _update_ui(self):
+        self.display.fill(BLACK)
+        for pt in self.snake:
+            pygame.draw.rect(self.display, BLUE1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
+            pygame.draw.rect(self.display, BLUE2,
+                             pygame.Rect(pt.x + 0.2 * BLOCK_SIZE, pt.y + 0.2 * BLOCK_SIZE, 0.6 * BLOCK_SIZE,
+                                         0.6 * BLOCK_SIZE))
+        pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        text = font.render('Score: ' + str(self.score), True, WHITE)
+        self.display.blit(text, [10, 10])
+        pygame.display.flip()
+    def _game_over(self):
+        self.display.fill(BLACK)
+        game_over_text = font.render('GAME OVER', True, WHITE)
+        score_text = font.render('Score: ' + str(self.score), True, WHITE)
+        self.display.blit(game_over_text, [self.w // 2 - game_over_text.get_width() // 2, self.h // 2 - game_over_text.get_height() // 2])
+        self.display.blit(score_text, [self.w // 2 - score_text.get_width() // 2, self.h // 2 + game_over_text.get_height() // 2])
+        pygame.display.flip()
+        pygame.time.wait(2000)
+    def run(self):
+        while True:
+            self.play_step()
+
 
 if __name__ == '__main__':
     game = SnakeGame()
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-        pygame.display.update()
+    game.run()
+    pygame.quit()
