@@ -190,11 +190,11 @@ class SnakeGame:
             self._place_food()
         else:
             self.snake.pop()
-            if self.special_food and self.head.x < self.special_food.x + SPECIAL_FOOD_SIZE and self.head.x + BLOCK_SIZE > self.special_food.x and self.head.y < self.special_food.y + SPECIAL_FOOD_SIZE and self.head.y + BLOCK_SIZE > self.special_food.y:
-                self.score += self.special_food_score
-                self.special_food = None
-                self.special_food_timer = 0
-                self.special_food_score = 0
+        if self.special_food and self.head.x < self.special_food.x + SPECIAL_FOOD_SIZE and self.head.x + BLOCK_SIZE > self.special_food.x and self.head.y < self.special_food.y + SPECIAL_FOOD_SIZE and self.head.y + BLOCK_SIZE > self.special_food.y:
+            self.score += self.special_food_score
+            self.special_food = None
+            self.special_food_timer = 0
+            self.special_food_score = 0
         
     def _update_ui(self):
         self.display.fill(BLACK)
