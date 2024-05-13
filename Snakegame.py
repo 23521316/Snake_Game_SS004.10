@@ -122,6 +122,8 @@ class SnakeGame:
         self.direction = Direction.RIGHT
         self.score = 0
         self._place_food()
+        self.food_counter = 0  # Reset food counter when game starts
+
     def play_step(self):
         self._handle_input()
         if not self.game_started:
@@ -133,13 +135,27 @@ class SnakeGame:
             self._update_ui()
         pygame.display.flip()
         self.clock.tick(self.frame_rate)  # Limit the frame rate here
-        
+
+        if self.score % 5 == 0 and self.score > 0 and not self.special_food and self.food_counter >= 5:
+            self._place_special_food()
+            self.special_food_timer = self.h
+            #change timer
+            self.special_food_score = 50
+            self.food_counter = 0  # Reset food counter after placing special food
+        if self.special_food:
+            self.special_food_score -= 1
+            self.special_food_timer -= self.w*0.02
+            if self.special_food_timer <= 0:
+                self.special_food = None
+                self.special_food_score = 0
+                
     def _place_food(self):
         x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         self.food = Point(x, y)
         if self.food in self.snake:
             self._place_food()
+            
     def _place_special_food(self):
         x = random.randint(0, (self.w - SPECIAL_FOOD_SIZE) // SPECIAL_FOOD_SIZE) * SPECIAL_FOOD_SIZE
         y = random.randint(0, (self.h - SPECIAL_FOOD_SIZE) // SPECIAL_FOOD_SIZE) * SPECIAL_FOOD_SIZE
