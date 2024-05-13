@@ -5,12 +5,12 @@ from collections import namedtuple
 
 pygame.init()
 pygame.mixer.init()
-menuchoice=pygame.mixer.Sound("Sound\menuchoice_sound.mp3")
-entergame=pygame.mixer.Sound("Sound\entergame_sound.mp3")
-eatfood=pygame.mixer.Sound("Sound\eat_food_sound.mp3")
-specialfood=pygame.mixer.Sound("Sound\special_food_sound.mp3")
-gameover=pygame.mixer.Sound("Sound\gameover_sound.mp3")
-pygame.mixer.music.load("Sound\_theme_song.mp3")
+menuchoice=pygame.mixer.Sound(r"Sound\_menuchoice_sound.mp3")
+entergame=pygame.mixer.Sound(r"Sound\_entergame_sound.mp3")
+eatfood=pygame.mixer.Sound(r"Sound\_eat_food_sound.mp3")
+specialfood=pygame.mixer.Sound(r"Sound\_special_food_sound.mp3")
+gameover=pygame.mixer.Sound(r"Sound\_gameover_sound.mp3")
+pygame.mixer.music.load(r"Sound\_theme_song.mp3")
 pygame.mixer.music.set_volume(0.25)
 pygame.mixer.music.play(-1,)
 class Direction(Enum):
