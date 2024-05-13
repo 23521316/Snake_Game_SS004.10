@@ -11,7 +11,7 @@ eatfood=pygame.mixer.Sound(r"Sound\_eat_food_sound.mp3")
 specialfood=pygame.mixer.Sound(r"Sound\_special_food_sound.mp3")
 gameover=pygame.mixer.Sound(r"Sound\_gameover_sound.mp3")
 pygame.mixer.music.load(r"Sound\_theme_song.mp3")
-pygame.mixer.music.set_volume(0.25)
+pygame.mixer.music.set_volume(0.3)
 pygame.mixer.music.play(-1,)
 class Direction(Enum):
     RIGHT = 1
@@ -47,12 +47,15 @@ class Menu:
             self.surface.blit(text, rect)
 
     def select_next_option(self):
+        menuchoice.play()
         self.selected_option = (self.selected_option + 1) % len(self.options)
 
     def select_previous_option(self):
+        menuchoice.play()
         self.selected_option = (self.selected_option - 1) % len(self.options)
 
     def get_selected_option(self):
+        entergame.play()
         return self.options[self.selected_option]
 
 class SnakeGame:
@@ -172,6 +175,8 @@ class SnakeGame:
         self.special_food = Point(x, y)
         if self.special_food in self.snake or self.special_food == self.food:
             self._place_special_food()
+        else:
+            specialfood.play()
     def _move_snake(self):
         new_head = self.head
         if self.direction == Direction.RIGHT:
@@ -186,6 +191,7 @@ class SnakeGame:
         self.snake.insert(0, self.head)
     def _check_collision(self):
         if self.head in self.snake[1:] or not (0 <= self.head.x < self.w) or not (0 <= self.head.y < self.h):
+            gameover.play()
             self._game_over()
             self.game_started = False
             self.food_counter = 0  # Reset food counter when game ends
@@ -194,12 +200,14 @@ class SnakeGame:
             self.special_food_score = 0
             return
         if self.head == self.food:
+            eatfood.play()
             self.score += 1
             self._place_food()
         else:
             self.snake.pop()
         if self.special_food and self.head.x < self.special_food.x + SPECIAL_FOOD_SIZE and self.head.x + BLOCK_SIZE > self.special_food.x and self.head.y < self.special_food.y + SPECIAL_FOOD_SIZE and self.head.y + BLOCK_SIZE > self.special_food.y:
             self.score += self.special_food_score
+            specialfood.play()
             self.special_food = None
             self.special_food_timer = 0
             self.special_food_score = 0
