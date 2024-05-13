@@ -4,7 +4,15 @@ from enum import Enum
 from collections import namedtuple
 
 pygame.init()
-
+pygame.mixer.init()
+menuchoice=pygame.mixer.Sound("menuchoice_sound.mp3")
+entergame=pygame.mixer.Sound("entergame_sound.mp3")
+eatfood=pygame.mixer.Sound("eat_food_sound.mp3")
+specialfood=pygame.mixer.Sound("special_food_sound.mp3")
+gameover=pygame.mixer.Sound("gameover_sound.mp3")
+pygame.mixer.music.load("theme_song.mp3")
+pygame.mixer.music.set_volume(0.25)
+pygame.mixer.music.play(-1,)
 class Direction(Enum):
     RIGHT = 1
     LEFT = 2
