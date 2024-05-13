@@ -14,12 +14,14 @@ class Direction(Enum):
 Point = namedtuple('Point', 'x, y')
 font = pygame.font.Font('Roboto-Medium.ttf', 25)
 BLOCK_SIZE = 20
+SPECIAL_FOOD_SIZE = 30  
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE1 = (0, 0, 255)
 BLUE2 = (0, 110, 255)
 RED = (200, 0, 0)
+YELLOW = (255, 255, 0) 
 class Menu:
     def __init__(self, surface, options):
         self.surface = surface
@@ -133,6 +135,7 @@ class SnakeGame:
             self._update_ui()
         pygame.display.flip()
         self.clock.tick(self.frame_rate)  # Limit the frame rate here
+
         if self.score % 5 == 0 and self.score > 0 and not self.special_food and self.food_counter >= 5:
             self._place_special_food()
             self.special_food_timer = self.h
@@ -145,7 +148,7 @@ class SnakeGame:
             if self.special_food_timer <= 0:
                 self.special_food = None
                 self.special_food_score = 0
-
+                
     def _place_food(self):
         x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
