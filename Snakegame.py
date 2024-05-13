@@ -65,12 +65,18 @@ class SnakeGame:
         self.food = None
         # clock
         self.clock = pygame.time.Clock()
+        self.food_counter = 0 
         # score
         self.score=0;
         self._place_food()
         self.menu = Menu(self.display, ["Easy", "Medium", "Hard"])
         self.game_started = False
         self.frame_rate = 10  # Default frame rate
+        self.special_food = None
+        self.special_food_timer = 0
+        self.special_food_score = 0
+        self.food_counter = 0  # Counter for eaten food
+        
     def _handle_input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
