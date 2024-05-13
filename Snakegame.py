@@ -155,6 +155,8 @@ class SnakeGame:
         self.food = Point(x, y)
         if self.food in self.snake:
             self._place_food()
+        else:
+            self.food_counter += 1  # Increment food counter when new food is placed
             
     def _place_special_food(self):
         x = random.randint(0, (self.w - SPECIAL_FOOD_SIZE) // SPECIAL_FOOD_SIZE) * SPECIAL_FOOD_SIZE
@@ -178,12 +180,22 @@ class SnakeGame:
         if self.head in self.snake[1:] or not (0 <= self.head.x < self.w) or not (0 <= self.head.y < self.h):
             self._game_over()
             self.game_started = False
+            self.food_counter = 0  # Reset food counter when game ends
+            self.special_food = None  # Remove special food when game ends
+            self.special_food_timer = 0
+            self.special_food_score = 0
             return
         if self.head == self.food:
             self.score += 1
             self._place_food()
         else:
             self.snake.pop()
+        if self.special_food and self.head.x < self.special_food.x + SPECIAL_FOOD_SIZE and self.head.x + BLOCK_SIZE > self.special_food.x and self.head.y < self.special_food.y + SPECIAL_FOOD_SIZE and self.head.y + BLOCK_SIZE > self.special_food.y:
+            self.score += self.special_food_score
+            self.special_food = None
+            self.special_food_timer = 0
+            self.special_food_score = 0
+        
     def _update_ui(self):
         self.display.fill(BLACK)
         for pt in self.snake:
@@ -192,6 +204,9 @@ class SnakeGame:
                              pygame.Rect(pt.x + 0.2 * BLOCK_SIZE, pt.y + 0.2 * BLOCK_SIZE, 0.6 * BLOCK_SIZE,
                                          0.6 * BLOCK_SIZE))
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        if self.special_food:
+            pygame.draw.rect(self.display, YELLOW, pygame.Rect(self.special_food.x, self.special_food.y, SPECIAL_FOOD_SIZE, SPECIAL_FOOD_SIZE))
+            pygame.draw.rect(self.display, RED, pygame.Rect(0, 0, self.special_food_timer, 20))
         text = font.render('Score: ' + str(self.score), True, WHITE)
         self.display.blit(text, [10, 10])
         pygame.display.flip()
