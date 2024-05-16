@@ -50,16 +50,7 @@ class Menu:
         menuchoice.play()
         self.selected_option = (self.selected_option + 1) % len(self.options)
 
-    def select_previous_option(self):
-        menuchoice.play()
-        self.selected_option = (self.selected_option - 1) % len(self.options)
-
-    def get_selected_option(self):
-        entergame.play()
-        return self.options[self.selected_option]
-
-class SnakeGame:
-    def __init__(self, w=1000, h=800):
+    d760):
         self.w = w
         self.h = h
         self.display = pygame.display.set_mode((self.w, self.h))
