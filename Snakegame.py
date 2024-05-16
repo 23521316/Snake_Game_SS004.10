@@ -190,7 +190,7 @@ class Menu:
             self.special_food_timer = 0
             self.special_food_score = 0
             return
-        if self.head == self.food:
+        ifif self.food and self.head.x < self.food.x + BLOCK_SIZE and self.head.x + BLOCK_SIZE > self.food.x and self.head.y < self.food.y + BLOCK_SIZE and self.head.y + BLOCK_SIZE > self.food.y:
             eatfood.play()
             self.score += 1
             self._place_food()
