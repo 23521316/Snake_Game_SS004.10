@@ -54,7 +54,16 @@ class Menu:
         menuchoice.play()
         self.selected_option = (self.selected_option + 1) % len(self.options)
 
-    d760):
+    def select_previous_option(self):
+        menuchoice.play()
+        self.selected_option = (self.selected_option - 1) % len(self.options)
+
+    def get_selected_option(self):
+        entergame.play()
+        return self.options[self.selected_option]
+
+class SnakeGame:
+    def __init__(self, w=1000, h=760):
         self.w = w
         self.h = h
         self.display = pygame.display.set_mode((self.w, self.h))
@@ -194,7 +203,7 @@ class Menu:
             self.special_food_timer = 0
             self.special_food_score = 0
             return
-        ifif self.food and self.head.x < self.food.x + BLOCK_SIZE and self.head.x + BLOCK_SIZE > self.food.x and self.head.y < self.food.y + BLOCK_SIZE and self.head.y + BLOCK_SIZE > self.food.y:
+        if self.food and self.head.x < self.food.x + BLOCK_SIZE and self.head.x + BLOCK_SIZE > self.food.x and self.head.y < self.food.y + BLOCK_SIZE and self.head.y + BLOCK_SIZE > self.food.y:
             eatfood.play()
             self.score += 1
             self._place_food()
