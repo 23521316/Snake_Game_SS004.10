@@ -4,7 +4,15 @@ from enum import Enum
 from collections import namedtuple
 
 pygame.init()
-
+pygame.mixer.init()
+menuchoice=pygame.mixer.Sound(r"Sound\_menuchoice_sound.mp3")
+entergame=pygame.mixer.Sound(r"Sound\_entergame_sound.mp3")
+eatfood=pygame.mixer.Sound(r"Sound\_eat_food_sound.mp3")
+specialfood=pygame.mixer.Sound(r"Sound\_special_food_sound.mp3")
+gameover=pygame.mixer.Sound(r"Sound\_gameover_sound.mp3")
+pygame.mixer.music.load(r"Sound\_theme_song.mp3")
+pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play(-1,)
 class Direction(Enum):
     RIGHT = 1
     LEFT = 2
@@ -14,12 +22,14 @@ class Direction(Enum):
 Point = namedtuple('Point', 'x, y')
 font = pygame.font.Font('Roboto-Medium.ttf', 25)
 BLOCK_SIZE = 20
+SPECIAL_FOOD_SIZE = 30  
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE1 = (0, 0, 255)
 BLUE2 = (0, 110, 255)
 RED = (200, 0, 0)
+YELLOW = (255, 255, 0) 
 class Menu:
     def __init__(self, surface, options):
         self.surface = surface
@@ -37,16 +47,10 @@ class Menu:
             self.surface.blit(text, rect)
 
     def select_next_option(self):
+        menuchoice.play()
         self.selected_option = (self.selected_option + 1) % len(self.options)
 
-    def select_previous_option(self):
-        self.selected_option = (self.selected_option - 1) % len(self.options)
-
-    def get_selected_option(self):
-        return self.options[self.selected_option]
-
-class SnakeGame:
-    def __init__(self, w=1000, h=800):
+    d760):
         self.w = w
         self.h = h
         self.display = pygame.display.set_mode((self.w, self.h))
@@ -65,12 +69,18 @@ class SnakeGame:
         self.food = None
         # clock
         self.clock = pygame.time.Clock()
+        self.food_counter = 0 
         # score
         self.score=0;
         self._place_food()
         self.menu = Menu(self.display, ["Easy", "Medium", "Hard"])
         self.game_started = False
         self.frame_rate = 10  # Default frame rate
+        self.special_food = None
+        self.special_food_timer = 0
+        self.special_food_score = 0
+        self.food_counter = 0  # Counter for eaten food
+        
     def _handle_input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -114,6 +124,8 @@ class SnakeGame:
         self.direction = Direction.RIGHT
         self.score = 0
         self._place_food()
+        self.food_counter = 0  # Reset food counter when game starts
+
     def play_step(self):
         self._handle_input()
         if not self.game_started:
@@ -125,12 +137,37 @@ class SnakeGame:
             self._update_ui()
         pygame.display.flip()
         self.clock.tick(self.frame_rate)  # Limit the frame rate here
+
+        if self.score % 5 == 0 and self.score > 0 and not self.special_food and self.food_counter >= 5:
+            self._place_special_food()
+            self.special_food_timer = self.h
+            #change timer
+            self.special_food_score = 50
+            self.food_counter = 0  # Reset food counter after placing special food
+        if self.special_food:
+            self.special_food_score -= 1
+            self.special_food_timer -= self.w*0.02
+            if self.special_food_timer <= 0:
+                self.special_food = None
+                self.special_food_score = 0
+                
     def _place_food(self):
         x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         self.food = Point(x, y)
         if self.food in self.snake:
             self._place_food()
+        else:
+            self.food_counter += 1  # Increment food counter when new food is placed
+            
+    def _place_special_food(self):
+        x = random.randint(0, (self.w - SPECIAL_FOOD_SIZE) // SPECIAL_FOOD_SIZE) * SPECIAL_FOOD_SIZE
+        y = random.randint(0, (self.h - SPECIAL_FOOD_SIZE) // SPECIAL_FOOD_SIZE) * SPECIAL_FOOD_SIZE
+        self.special_food = Point(x, y)
+        if self.special_food in self.snake or self.special_food == self.food:
+            self._place_special_food()
+        else:
+            specialfood.play()
     def _move_snake(self):
         new_head = self.head
         if self.direction == Direction.RIGHT:
@@ -145,14 +182,27 @@ class SnakeGame:
         self.snake.insert(0, self.head)
     def _check_collision(self):
         if self.head in self.snake[1:] or not (0 <= self.head.x < self.w) or not (0 <= self.head.y < self.h):
+            gameover.play()
             self._game_over()
             self.game_started = False
+            self.food_counter = 0  # Reset food counter when game ends
+            self.special_food = None  # Remove special food when game ends
+            self.special_food_timer = 0
+            self.special_food_score = 0
             return
-        if self.head == self.food:
+        ifif self.food and self.head.x < self.food.x + BLOCK_SIZE and self.head.x + BLOCK_SIZE > self.food.x and self.head.y < self.food.y + BLOCK_SIZE and self.head.y + BLOCK_SIZE > self.food.y:
+            eatfood.play()
             self.score += 1
             self._place_food()
         else:
             self.snake.pop()
+        if self.special_food and self.head.x < self.special_food.x + SPECIAL_FOOD_SIZE and self.head.x + BLOCK_SIZE > self.special_food.x and self.head.y < self.special_food.y + SPECIAL_FOOD_SIZE and self.head.y + BLOCK_SIZE > self.special_food.y:
+            self.score += self.special_food_score
+            specialfood.play()
+            self.special_food = None
+            self.special_food_timer = 0
+            self.special_food_score = 0
+        
     def _update_ui(self):
         self.display.fill(BLACK)
         for pt in self.snake:
@@ -161,6 +211,9 @@ class SnakeGame:
                              pygame.Rect(pt.x + 0.2 * BLOCK_SIZE, pt.y + 0.2 * BLOCK_SIZE, 0.6 * BLOCK_SIZE,
                                          0.6 * BLOCK_SIZE))
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        if self.special_food:
+            pygame.draw.rect(self.display, YELLOW, pygame.Rect(self.special_food.x, self.special_food.y, SPECIAL_FOOD_SIZE, SPECIAL_FOOD_SIZE))
+            pygame.draw.rect(self.display, RED, pygame.Rect(0, 0, self.special_food_timer, 20))
         text = font.render('Score: ' + str(self.score), True, WHITE)
         self.display.blit(text, [10, 10])
         pygame.display.flip()
