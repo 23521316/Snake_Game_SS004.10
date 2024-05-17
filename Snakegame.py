@@ -45,7 +45,11 @@ class Menu:
             if i == self.selected_option:
                 pygame.draw.rect(self.surface, BLUE1, rect)
             self.surface.blit(text, rect)
-
+        snakegame_image = pygame.image.load("cutesnake.png")
+        self.surface.blit(snakegame_image, (-20, 40)) 
+        snakegame_text = large_font.render("SNAKEGAME", True, (255, 165, 0))
+        text_rect = snakegame_text.get_rect(center=(500, 150)) 
+        self.surface.blit(snakegame_text, text_rect)
     def select_next_option(self):
         menuchoice.play()
         self.selected_option = (self.selected_option + 1) % len(self.options)
