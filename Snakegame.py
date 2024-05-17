@@ -23,13 +23,13 @@ Point = namedtuple('Point', 'x, y')
 font = pygame.font.Font('Roboto-Medium.ttf', 25)
 BLOCK_SIZE = 20
 SPECIAL_FOOD_SIZE = 30  
-
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE1 = (0, 0, 255)
 BLUE2 = (0, 110, 255)
 RED = (200, 0, 0)
 YELLOW = (255, 255, 0) 
+large_font = pygame.font.Font(None, 60)
 class Menu:
     def __init__(self, surface, options):
         self.surface = surface
