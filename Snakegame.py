@@ -23,18 +23,13 @@ Point = namedtuple('Point', 'x, y')
 font = pygame.font.Font('Roboto-Medium.ttf', 25)
 BLOCK_SIZE = 20
 SPECIAL_FOOD_SIZE = 30  
-large_font = pygame.font.Font(None, 60)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE1 = (0, 0, 255)
 BLUE2 = (0, 110, 255)
 RED = (200, 0, 0)
 YELLOW = (255, 255, 0) 
-snakegame_image = pygame.image.load("cutesnake.png")
-        self.surface.blit(snakegame_image, (-20, 40)) 
-        snakegame_text = large_font.render("SNAKEGAME", True, (255, 165, 0))
-        text_rect = snakegame_text.get_rect(center=(500, 150)) 
-        self.surface.blit(snakegame_text, text_rect)
+large_font = pygame.font.Font(None, 60)
 class Menu:
     def __init__(self, surface, options):
         self.surface = surface
